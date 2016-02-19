@@ -30,9 +30,8 @@ It uses the KafkaNetClient https://github.com/gigya/KafkaNetClient
 </configuration>
 ```
 
-You can define multiple brokers by adding more values to the <brokers> collection.
-You can only send to one topic currently
+## Notes
 
-## Async
-
+You can define multiple brokers by adding more values to the <brokers> collection.  
+You can only send to one topic currently  
 The Producer is async, but the appender is not, so it has to use .Wait() to ensure the send is complete.

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using KafkaNet;
 using KafkaNet.Model;
 using KafkaNet.Protocol;
@@ -14,7 +15,8 @@ namespace Log4NetKafkaAppender
     {
         public List<string> Brokers { get; set; }
         public string Topic { get; set; }
-        
+        public bool WaitForAsync { get; set; }
+
         private Producer _producer;
 
         public override void ActivateOptions()
@@ -53,7 +55,16 @@ namespace Log4NetKafkaAppender
             LogLog.Debug(GetType(),
                 string.Format("[{0}][{1}] Sending message to Topic `{2}` on Brokers `{3}`. The message is: {4}",
                     loggingEvent.TimeStamp, Name, Topic, string.Join(",", Brokers), message));
-            _producer.SendMessageAsync(Topic, new Message(message)).Wait();
-        }        
+            SendMessageToKafka(message);
+        }
+
+        private void SendMessageToKafka(string message)
+        {
+            Task sendTask = _producer.SendMessageAsync(Topic, new Message(message));
+            if (WaitForAsync)
+            {
+                sendTask.Wait();
+            }
+        }
     }
 }
